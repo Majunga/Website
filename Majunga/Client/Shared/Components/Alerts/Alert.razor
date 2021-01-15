@@ -1,0 +1,15 @@
+﻿@using Majunga.Shared
+
+<div class="alert alert-@AlertTypeDescription" role="alert">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter] 
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public AlertType Type { get; set; }
+
+    private string AlertTypeDescription => this.Type.ToString().ToLower();
+}
