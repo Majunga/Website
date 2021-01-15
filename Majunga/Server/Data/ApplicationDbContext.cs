@@ -1,12 +1,9 @@
 ﻿using IdentityServer4.EntityFramework.Options;
 using Majunga.Server.Models;
+using Majunga.Shared.ViewModels;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Majunga.Server.Data
 {
@@ -17,5 +14,7 @@ namespace Majunga.Server.Data
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
         }
+
+        public DbSet<File> Files { get; set; }
     }
 }

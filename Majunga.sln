@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Majunga.Server", "Majunga\Server\Majunga.Server.csproj", "{55FDB65D-B632-4311-AAF8-4148CE944FD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Majunga.Server", "Majunga\Server\Majunga.Server.csproj", "{55FDB65D-B632-4311-AAF8-4148CE944FD8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Majunga.Client", "Majunga\Client\Majunga.Client.csproj", "{879265ED-00C7-4F3A-B582-0B1DC3A35FE5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Majunga.Client", "Majunga\Client\Majunga.Client.csproj", "{879265ED-00C7-4F3A-B582-0B1DC3A35FE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Majunga.Shared", "Majunga\Shared\Majunga.Shared.csproj", "{0166FF78-704B-4390-9919-E731871E38F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Majunga.Shared", "Majunga\Shared\Majunga.Shared.csproj", "{0166FF78-704B-4390-9919-E731871E38F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
