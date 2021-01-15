@@ -1,0 +1,59 @@
+﻿@page "/Share"
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Majunga.Client.Shared.Components.Grid
+@using Majunga.Client.Shared.Components.Alerts
+@using Majunga.Shared.ViewModels
+@using Majunga.Shared
+
+@inject HttpClient Http
+@inject AlertState AlertState
+
+
+<h3>File share</h3>
+
+@if (_model == null || _model.Count == 0)
+{
+    <Alert Type="@AlertType.Info">No files available</Alert>
+}
+else
+{
+    <Table>
+        <THead>
+            <Tr>
+                <Th>Id</Th>
+                <Th>Name</Th>
+            </Tr>
+        </THead>
+        <TBody>
+            @foreach (var item in _model)
+            {
+                <Tr>
+                    <Td>@item.Id</Td>
+                    <Td>@item.Name</Td>
+                </Tr>
+            }
+        </TBody>
+    </Table>
+}
+
+@code {
+    private IReadOnlyCollection<File> _model;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _model = await Http.GetFromJsonAsync<IReadOnlyCollection<File>>("/share/files");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception ex)
+        {
+            AlertState.Error(ex.Message);
+        }
+    }
+}
