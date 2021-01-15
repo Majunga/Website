@@ -1,0 +1,16 @@
+﻿<thead class="@this.Class" @attributes="AdditionalAttributes">
+    @ChildContent
+</thead>
+
+@code {
+        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter] public string Class { get; set; }
+        [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        this.Class = string.Join(' ', "thead-dark", this.Class);
+
+        return base.OnInitializedAsync();
+    }
+}
