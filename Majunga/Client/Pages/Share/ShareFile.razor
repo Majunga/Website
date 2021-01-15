@@ -1,0 +1,57 @@
+﻿@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject AlertState AlertState
+@inject IJSRuntime JSRuntime
+
+<Popup @ref="_popup" id="@Id" OnHide="@OnHide">
+    <PopupHeader Hide="@(async () => await this._popup.Hide())">
+        <h3>Share File</h3>
+    </PopupHeader>
+    <PopupBody>
+        <a class="mr-5" href="@_shareUrl" name="ShareLink">@_name</a>&nbsp;<button role="button" class="btn btn-success" @onclick="() => CopyLink()">Copy</button>
+        <Alert Type="AlertType.Success" class="@(_copied ? "d-inline" : "d-none")">
+            Copied!
+        </Alert>
+    </PopupBody>
+    <PopupFooter>
+        <button role="button" class="btn btn-primary" @onclick="() => _popup.Hide()">Close</button>
+    </PopupFooter>
+</Popup>
+@code {
+    public const string Id = "ShareLink";
+
+    private Popup _popup { get; set; }
+
+    [Parameter] public EventCallback OnHide { get; set; }
+
+    private string _shareUrl;
+    private string _name;
+    private bool _copied = false;
+
+    public async Task Show(FileView model)
+    {
+        _name = model.Name;
+        if (string.IsNullOrWhiteSpace(model.ShareLink))
+        {
+            model.CreateShareLink();
+            var response = await Http.PutAsJsonAsync($"/api/share/files/{model.Id}", model);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                AlertState.Error($"Failed to create link {response.StatusCode}");
+                return;
+            }
+        }
+
+        _shareUrl = NavigationManager.ToAbsoluteUri($"/api/share/files/{model.ShareLink}").AbsoluteUri;
+        await this._popup.Show();
+    }
+
+    protected async Task CopyLink()
+    {
+        await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", _shareUrl);
+        _copied = true;
+    }
+}
+
+

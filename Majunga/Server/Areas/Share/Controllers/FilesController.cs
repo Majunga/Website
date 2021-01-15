@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Majunga.Server.Data;
 using Majunga.Shared.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace Majunga.Server.Areas.Share.Controllers
 {
@@ -24,32 +25,41 @@ namespace Majunga.Server.Areas.Share.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FileView>>> GetFiles()
         {
-            return await _context.Files.Select(f => new FileView { Id = f.Id, Name = f.Name }).ToListAsync();
+            return await _context.Files.Select(f => new FileView 
+            { 
+                Id = f.Id, 
+                Name = f.Name,
+                ShareLink = f.ShareLink
+            }).ToListAsync();
         }
 
-        // GET: api/Files/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<File>> GetFile(int id)
+        // GET: api/Files/{shareLink}
+        [HttpGet("{shareLink}")]
+        public async Task<ActionResult<File>> GetFile(string shareLink)
         {
-            var file = await _context.Files.FindAsync(id);
+            var file = await _context.Files.FirstOrDefaultAsync(e => e.ShareLink == shareLink);
 
             if (file == null)
             {
                 return NotFound();
             }
 
-            return file;
+            return this.File(file.FileBytes, file.ContentType, file.Filename);
         }
 
         // PUT: api/Files/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFile(int id, File file)
+        public async Task<IActionResult> PutFile(int id, FileView fileViewModel)
         {
-            if (id != file.Id)
+            if (id != fileViewModel.Id)
             {
                 return BadRequest();
             }
+
+            var file = await _context.Files.FindAsync(id);
+
+            file.ShareLink = fileViewModel.ShareLink;
 
             _context.Entry(file).State = EntityState.Modified;
 

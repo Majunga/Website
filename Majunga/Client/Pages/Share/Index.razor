@@ -1,12 +1,5 @@
 ﻿@page "/Share"
 
-@using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@using Majunga.Client.Shared.Components.Grid
-@using Majunga.Client.Shared.Components.Alerts
-@using Majunga.Shared.ViewModels
-@using Majunga.Shared
-
 @inject HttpClient Http
 @inject AlertState AlertState
 
@@ -35,26 +28,29 @@ else
         <TBody>
             @foreach (var item in _model)
             {
-            <Tr>
-                <Td>@item.Id</Td>
-                <Td>@item.Name</Td>
-                <Td>
-                    <div class="btn-group">
-                        <button class="btn btn-danger" @onclick="(async () => await this.DeleteAsync(item.Id))">Delete</button>
-                    </div>
-                </Td>
-            </Tr>
+                <Tr>
+                    <Td>@item.Id</Td>
+                    <Td>@item.Name</Td>
+                    <Td class="float-right">
+                        <div class="btn-group">
+                            <button class="btn btn-success" @onclick="(async () => await shareFile.Show(item))">Copy</button>
+                            <button class="btn btn-danger" @onclick="(async () => await this.DeleteAsync(item.Id))">Delete</button>
+                        </div>
+                    </Td>
+                </Tr>
             }
         </TBody>
     </Table>
 }
 
-<AddFile @ref="addFile"/>
+<AddFile @ref="addFile" OnHide="() => LoadGrid()"/>
+<ShareFile @ref="shareFile" />
 
 @code {
     private IReadOnlyCollection<FileView> _model;
 
     private AddFile addFile;
+    private ShareFile shareFile;
 
     protected override async Task OnInitializedAsync() => await this.LoadGrid();
 

@@ -17,16 +17,9 @@ namespace Majunga.Server.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<File>()
-                .HasOne(e => e.Link)
-                .WithOne(e => e.File)
-                .HasForeignKey<Link>(e => e.FileId)
-                .IsRequired(false);
-
             base.OnModelCreating(builder);
         }
 
         public DbSet<File> Files { get; set; }
-        public DbSet<Link> Links { get; set; }
     }
 }

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Majunga.Server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210115161001_LinkTable")]
-    partial class LinkTable
+    [Migration("20210115173427_ShareLinkColumn")]
+    partial class ShareLinkColumn
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -199,36 +199,15 @@ namespace Majunga.Server.Data.Migrations
                     b.Property<byte[]>("FileBytes")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<int>("LinkId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShareLink")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Files");
-                });
-
-            modelBuilder.Entity("Majunga.Shared.ViewModels.Link", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int>("FileId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("LinkId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FileId")
-                        .IsUnique();
-
-                    b.ToTable("Links");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -366,15 +345,6 @@ namespace Majunga.Server.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Majunga.Shared.ViewModels.Link", b =>
-                {
-                    b.HasOne("Majunga.Shared.ViewModels.File", "File")
-                        .WithOne("Link")
-                        .HasForeignKey("Majunga.Shared.ViewModels.Link", "FileId");
-
-                    b.Navigation("File");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -424,11 +394,6 @@ namespace Majunga.Server.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Majunga.Shared.ViewModels.File", b =>
-                {
-                    b.Navigation("Link");
                 });
 #pragma warning restore 612, 618
         }
