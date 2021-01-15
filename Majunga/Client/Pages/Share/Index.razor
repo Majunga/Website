@@ -14,7 +14,7 @@
 <h3>File share</h3>
 
 <div class="btn-group">
-    <button type="button" class="btn btn-primary" @onclick="async () => await addFile.Show()">Add</button>
+    <button type="button" class="btn btn-primary" @onclick="(async () => await addFile.Show())">Add</button>
 </div>
 
 
@@ -40,7 +40,7 @@ else
                 <Td>@item.Name</Td>
                 <Td>
                     <div class="btn-group">
-                        <button class="btn btn-danger" @onclick="async () => await this.DeleteAsync(item.Id)">Delete</button>
+                        <button class="btn btn-danger" @onclick="(async () => await this.DeleteAsync(item.Id))">Delete</button>
                     </div>
                 </Td>
             </Tr>
