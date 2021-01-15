@@ -5,10 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Majunga.Server.Data;
 using Majunga.Shared.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Majunga.Server.Areas.Share.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/share/[controller]")]
     [ApiController]
     public class FilesController : ControllerBase
     {
@@ -21,9 +22,9 @@ namespace Majunga.Server.Areas.Share.Controllers
 
         // GET: api/Files
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<File>>> GetFiles()
+        public async Task<ActionResult<IEnumerable<FileView>>> GetFiles()
         {
-            return await _context.Files.ToListAsync();
+            return await _context.Files.Select(f => new FileView { Id = f.Id, Name = f.Name }).ToListAsync();
         }
 
         // GET: api/Files/5

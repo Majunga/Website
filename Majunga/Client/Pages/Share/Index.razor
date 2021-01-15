@@ -13,6 +13,11 @@
 
 <h3>File share</h3>
 
+<div class="btn-group">
+    <button type="button" class="btn btn-primary" @onclick="async () => await addFile.Show()">Add</button>
+</div>
+
+
 @if (_model == null || _model.Count == 0)
 {
     <Alert Type="@AlertType.Info">No files available</Alert>
@@ -24,28 +29,40 @@ else
             <Tr>
                 <Th>Id</Th>
                 <Th>Name</Th>
+                <Th></Th>
             </Tr>
         </THead>
         <TBody>
             @foreach (var item in _model)
             {
-                <Tr>
-                    <Td>@item.Id</Td>
-                    <Td>@item.Name</Td>
-                </Tr>
+            <Tr>
+                <Td>@item.Id</Td>
+                <Td>@item.Name</Td>
+                <Td>
+                    <div class="btn-group">
+                        <button class="btn btn-danger" @onclick="async () => await this.DeleteAsync(item.Id)">Delete</button>
+                    </div>
+                </Td>
+            </Tr>
             }
         </TBody>
     </Table>
 }
 
-@code {
-    private IReadOnlyCollection<File> _model;
+<AddFile @ref="addFile"/>
 
-    protected override async Task OnInitializedAsync()
+@code {
+    private IReadOnlyCollection<FileView> _model;
+
+    private AddFile addFile;
+
+    protected override async Task OnInitializedAsync() => await this.LoadGrid();
+
+    private async Task LoadGrid()
     {
         try
         {
-            _model = await Http.GetFromJsonAsync<IReadOnlyCollection<File>>("/share/files");
+            _model = await Http.GetFromJsonAsync<IReadOnlyCollection<FileView>>("/api/share/files");
         }
         catch (AccessTokenNotAvailableException exception)
         {
@@ -54,6 +71,24 @@ else
         catch (Exception ex)
         {
             AlertState.Error(ex.Message);
+        }
+    }
+
+    protected async Task DeleteAsync(int id)
+    {
+        try
+        {
+            var response = await Http.DeleteAsync($"/api/share/files/{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                AlertState.Success("File deleted succesfully");
+                await this.LoadGrid();
+            }
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
         }
     }
 }
