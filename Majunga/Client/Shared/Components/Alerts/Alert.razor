@@ -1,15 +1,27 @@
 ﻿@using Majunga.Shared
 
-<div class="alert alert-@AlertTypeDescription" role="alert">
+<div class="@this.Class" role="alert" @attributes="@AdditionalAttributes">
     @ChildContent
 </div>
 
 @code {
-    [Parameter] 
+    [Parameter]
     public RenderFragment ChildContent { get; set; }
 
     [Parameter]
     public AlertType Type { get; set; }
 
+    [Parameter]
+    public string Class { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
+
     private string AlertTypeDescription => this.Type.ToString().ToLower();
+
+    protected override void OnInitialized()
+    {
+        var defaultClass = $"alert alert-{this.AlertTypeDescription}";
+        this.Class = string.IsNullOrWhiteSpace(this.Class) ? defaultClass : string.Join(' ', defaultClass, this.Class);
+    }
 }
