@@ -1,3 +1,4 @@
+using Majunga.Shared;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +26,8 @@ namespace Majunga.Client
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Majunga.ServerAPI"));
 
             builder.Services.AddApiAuthorization();
+
+            builder.Services.AddSingleton(typeof(AlertState));
 
             await builder.Build().RunAsync();
         }

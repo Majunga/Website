@@ -1,0 +1,54 @@
+﻿@using Majunga.Shared
+@inject AlertState AlertState
+@inject NavigationManager NavigationManager
+@implements IDisposable
+
+
+@if (!string.IsNullOrWhiteSpace(AlertState.ErrorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @AlertState.ErrorMessage
+    </div>
+}
+@if (!string.IsNullOrWhiteSpace(AlertState.WarningMessage))
+{
+    <div class="alert alert-warning" role="alert">
+        @AlertState.WarningMessage
+    </div>
+}
+@if (!string.IsNullOrWhiteSpace(AlertState.InfoMessage))
+{
+    <div class="alert alert-info" role="alert">
+        @AlertState.InfoMessage
+    </div>
+}
+@if (!string.IsNullOrWhiteSpace(AlertState.SuccessMessage))
+{
+    <div class="alert alert-success" role="alert">
+        @AlertState.SuccessMessage
+    </div>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        AlertState.OnChange += StateHasChanged;
+
+        // Subscribe to the event
+        NavigationManager.LocationChanged += LocationChanged;
+        base.OnInitialized();
+    }
+
+    void LocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        AlertState.ClearAll();
+    }
+
+    public void Dispose()
+    {
+        AlertState.OnChange -= StateHasChanged;
+
+        // Unsubscribe from the event when our component is disposed
+        NavigationManager.LocationChanged -= LocationChanged;
+    }
+}
