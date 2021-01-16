@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Majunga.Server.Data;
 using Majunga.Shared.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.StaticFiles;
+using Majunga.Shared.Models;
+using Majunga.Server.Data.MongoServices;
 
 namespace Majunga.Server.Areas.Share.Controllers
 {
@@ -14,30 +11,30 @@ namespace Majunga.Server.Areas.Share.Controllers
     [ApiController]
     public class FilesController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly FileShareService _context;
 
-        public FilesController(ApplicationDbContext context)
+        public FilesController(FileShareService context)
         {
             _context = context;
         }
 
         // GET: api/Files
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<FileView>>> GetFiles()
+        public ActionResult<IEnumerable<FileView>> GetFiles()
         {
-            return await _context.Files.Select(f => new FileView 
+            return _context.Get().Select(f => new FileView 
             { 
                 Id = f.Id, 
                 Name = f.Name,
                 ShareLink = f.ShareLink
-            }).ToListAsync();
+            }).ToList();
         }
 
         // GET: api/Files/{shareLink}
         [HttpGet("{shareLink}")]
-        public async Task<ActionResult<File>> GetFile(string shareLink)
+        public ActionResult<File> GetFile(string shareLink)
         {
-            var file = await _context.Files.FirstOrDefaultAsync(e => e.ShareLink == shareLink);
+            var file = _context.Get().FirstOrDefault(e => e.ShareLink == shareLink);
 
             if (file == null)
             {
@@ -50,34 +47,18 @@ namespace Majunga.Server.Areas.Share.Controllers
         // PUT: api/Files/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFile(int id, FileView fileViewModel)
+        public IActionResult PutFile(string id, FileView fileViewModel)
         {
             if (id != fileViewModel.Id)
             {
                 return BadRequest();
             }
 
-            var file = await _context.Files.FindAsync(id);
+            var file =  _context.Get(id);
 
             file.ShareLink = fileViewModel.ShareLink;
 
-            _context.Entry(file).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!FileExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            _context.Update(id, file);
 
             return NoContent();
         }
@@ -85,33 +66,26 @@ namespace Majunga.Server.Areas.Share.Controllers
         // POST: api/Files
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<File>> PostFile(File file)
+        public ActionResult<File> PostFile(File file)
         {
-            _context.Files.Add(file);
-            await _context.SaveChangesAsync();
+            var createdFile = _context.Create(file);
 
-            return CreatedAtAction("GetFile", new { id = file.Id }, file);
+            return CreatedAtAction("GetFile", new { id = createdFile.Id }, createdFile);
         }
 
         // DELETE: api/Files/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFile(int id)
+        public IActionResult DeleteFile(string id)
         {
-            var file = await _context.Files.FindAsync(id);
+            var file = _context.Get(id);
             if (file == null)
             {
                 return NotFound();
             }
 
-            _context.Files.Remove(file);
-            await _context.SaveChangesAsync();
+            _context.Remove(file);
 
             return NoContent();
-        }
-
-        private bool FileExists(int id)
-        {
-            return _context.Files.Any(e => e.Id == id);
         }
     }
 }

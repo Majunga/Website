@@ -26,7 +26,7 @@
 
     private File _model = new File();
     private Popup _popup { get; set; }
-    private bool IsNewItem => _model.Id == 0;
+    private bool IsNewItem => string.IsNullOrWhiteSpace(_model.Id);
 
     [Parameter] public EventCallback OnHide { get; set; }
 

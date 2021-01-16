@@ -1,9 +1,13 @@
-﻿using System;
-namespace Majunga.Shared.ViewModels
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
+namespace Majunga.Shared.Models
 {
     public class File
     {
-        public int Id { get; set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
         public string Name { get; set; }
         public string Filename { get; set; }
         public string ContentType { get; set; }
