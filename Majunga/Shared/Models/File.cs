@@ -11,7 +11,11 @@ namespace Majunga.Shared.Models
         public string Name { get; set; }
         public string Filename { get; set; }
         public string ContentType { get; set; }
+
+        public string FileId { get; set; }
+        [BsonIgnore]
         public byte[] FileBytes { get; set; }
+
         public string ShareLink { get; set; }
     }
 }
