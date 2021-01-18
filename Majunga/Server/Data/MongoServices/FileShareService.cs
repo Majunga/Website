@@ -1,13 +1,17 @@
 ﻿using Majunga.Shared.Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.GridFS;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Majunga.Server.Data.MongoServices
 {
     public class FileShareService
     {
         private readonly IMongoCollection<File> _entities;
+        private readonly GridFSBucket _gridFs;
 
         public FileShareService(IDatabaseSettings settings)
         {
@@ -15,27 +19,39 @@ namespace Majunga.Server.Data.MongoServices
             var database = client.GetDatabase(settings.DatabaseName);
 
             _entities = database.GetCollection<File>("FileShare");
+            _gridFs = new GridFSBucket(database);
+            
         }
 
-        public List<File> Get() =>
-            _entities.Find(e => true).ToList();
+        public async Task<List<File>> Get() =>
+            (await _entities.FindAsync(e => true)).ToList();
 
-        public File Get(string id) =>
-            _entities.Find(e => e.Id == id).FirstOrDefault();
+        public async Task<File> Get(string id) =>
+            (await _entities.FindAsync(e => e.Id == id)).FirstOrDefault();
 
-        public File Create(File file)
-        {
-            _entities.InsertOne(file);
+        public async Task<File> GetFile(File file) {
+            file.FileBytes = (await _gridFs.DownloadAsBytesAsync(new ObjectId(file.FileId)));
+
             return file;
         }
 
-        public void Update(string id, File file) =>
-            _entities.ReplaceOne(e => e.Id == id, file);
+        public async Task<File> Create(File file)
+        {
+            file.FileId = (await _gridFs.UploadFromBytesAsync(file.Name, file.FileBytes)).ToString();
+            
+            await _entities.InsertOneAsync(file);
 
-        public void Remove(File bookIn) =>
-            _entities.DeleteOne(e => e.Id == bookIn.Id);
+            return file;
+        }
 
-        public void Remove(string id) =>
-            _entities.DeleteOne(book => book.Id == id);
+        public async Task Update(string id, File file) =>
+            await _entities.ReplaceOneAsync(e => e.Id == id, file);
+
+        public async Task Remove(string id) {
+            var file = (await _entities.FindAsync(e => e.Id == id)).FirstOrDefault();
+
+            await _gridFs.DeleteAsync(new ObjectId(file.FileId));
+            await _entities.DeleteOneAsync(file => file.Id == id);
+        }
     }
 }
