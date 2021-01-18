@@ -26,8 +26,10 @@ spec:
       - name: repo
       containers:
       - name: website
+        volumeMounts:
+        - mountPath: "/Majunga/Server/Website.db"
+          name: websitevolume
         image: #{image}#
-        ports:
         - containerPort: 8080
           name: website
         readinessProbe:
@@ -56,3 +58,15 @@ spec:
     color: green
 
 ---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: websitevolume
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: websitevolume
