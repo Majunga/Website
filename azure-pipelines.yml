@@ -28,6 +28,18 @@ stages:
     pool:
       name: $(agent)
     steps:
+    - task: replacetokens@3
+      inputs:
+        rootDirectory: '$(Build.Repository.LocalPath)'
+        targetFiles: '**/appsettings*.config'
+        encoding: 'auto'
+        writeBOM: true
+        actionOnMissing: 'warn'
+        keepToken: false
+        tokenPrefix: '#{'
+        tokenSuffix: '}#'
+        useLegacyPattern: false
+        enableTelemetry: true
     - task: Docker@2
       displayName: Build and push an image to container registry
       inputs:
