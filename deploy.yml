@@ -61,7 +61,7 @@ spec:
         image: #{image}#
         ports:
         - containerPort: 80
-          name: website
+        - containerPort: 443
         volumeMounts:
         - mountPath: "src/Majunga/Server/Website.db"
           name: sqlitevolume
@@ -84,6 +84,7 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
+  - port: 443
   - port: 80
   selector:
     type: website
