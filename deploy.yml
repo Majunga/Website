@@ -22,21 +22,21 @@ spec:
         color: green
         language: csharp
     spec:      
-    imagePullSecrets:
-      - name: repo
-    volumes:
-    - name: sqlitevolume
-      persistentVolumeClaim:
-        claimName: sqlitevolume
-    containers:
-    - name: website
-      image: #{image}#
-      ports:
-      - containerPort: 8080
-        name: website
-      volumeMounts:
-      - mountPath: "src/Majunga/Server/Website.db"
-        name: sqlitevolume
+      imagePullSecrets:
+        - name: repo
+      volumes:
+      - name: sqlitevolume
+        persistentVolumeClaim:
+          claimName: sqlitevolume
+      containers:
+      - name: website
+        image: #{image}#
+        ports:
+        - containerPort: 8080
+          name: website
+        volumeMounts:
+        - mountPath: "src/Majunga/Server/Website.db"
+          name: sqlitevolume
       
 
 ---
@@ -92,12 +92,12 @@ spec:
         service: mongodb
         color: blue
     spec:
+      imagePullSecrets:
+      - name: repo
       volumes:
       - name: mongovolume
         persistentVolumeClaim:
           claimName: mongovolume
-      imagePullSecrets:
-      - name: repo
       containers:
       - name: mongodb
         volumeMounts:
