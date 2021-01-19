@@ -17,7 +17,7 @@ RUN dotnet build "Majunga.Server.csproj" -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "Majunga.Server.csproj" -c Release -o /app/publish
-COPY ["https/Majunga.Server.pfx", "/app/publish/https/"]
+COPY ["Majunga/Server/https/Majunga.Server.pfx", "/app/publish/https/"]
 
 
 FROM base AS final
