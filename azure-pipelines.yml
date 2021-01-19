@@ -28,6 +28,18 @@ stages:
     pool:
       name: $(agent)
     steps:
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'custom'
+        custom: 'dev-certs'
+        arguments: 'https -ep $(Build.Repository.LocalPath)/Majunga/Server/https/Majunga.Server.pfx -p $(certPassword)'
+
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'custom'
+        custom: 'dev-certs'
+        arguments: 'https --trust'
+
     - task: replacetokens@3
       inputs:
         rootDirectory: '$(Build.Repository.LocalPath)'
