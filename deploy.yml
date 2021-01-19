@@ -61,7 +61,9 @@ spec:
         image: #{image}#
         ports:
         - containerPort: 80
+          name: http
         - containerPort: 443
+          name: https
         volumeMounts:
         - mountPath: "src/Majunga/Server/Website.db"
           name: sqlitevolume
