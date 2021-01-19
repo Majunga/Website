@@ -75,7 +75,8 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: 8080
+  - port: 80
+    nodePort: 8080
   selector:
     type: website
     service: website
