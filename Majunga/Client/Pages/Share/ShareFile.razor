@@ -7,7 +7,7 @@
         <h3>Share File</h3>
     </PopupHeader>
     <PopupBody>
-        <button class="btn btn-success" @onclick='(() => NavigationManager.NavigateTo($"/share/sharefile/{_model.Id}/{WebUtility.UrlEncode(_model.Filename)}"))' name="ShareLink">View</button>
+        <button class="btn btn-success" @onclick='(() => NavigationManager.NavigateTo($"/share/viewfile/{_model.Id}/{WebUtility.UrlEncode(_model.Filename)}"))' name="ShareLink">View</button>
     </PopupBody>
     <PopupFooter>
         <button role="button" class="btn btn-primary" @onclick="() => _popup.Hide()">Close</button>
