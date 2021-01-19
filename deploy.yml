@@ -21,26 +21,23 @@ spec:
         service: website
         color: green
         language: csharp
-    spec:
-      imagePullSecrets:
+    spec:      
+    imagePullSecrets:
       - name: repo
-      containers:
-      - name: website
-        volumeMounts:
-        - mountPath: "/Majunga/Server/Website.db"
-          name: websitevolume
-        image: #{image}#
-        - containerPort: 8080
-          name: website
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 8080
-          periodSeconds: 1
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 8080
+    volumes:
+    - name: sqlitevolume
+      persistentVolumeClaim:
+        claimName: sqlitevolume
+    containers:
+    - name: website
+      image: #{image}#
+      ports:
+      - containerPort: 8080
+        name: website
+      volumeMounts:
+      - mountPath: "src/Majunga/Server/Website.db"
+        name: sqlitevolume
+      
 
 ---
 
@@ -62,11 +59,80 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: websitevolume
+  name: sqlitevolume
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi
-  storageClassName: websitevolume
+  storageClassName: sqlitevolume
+  
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      type: mongodb
+      service: mongodb
+      color: blue
+  minReadySeconds: 1
+  progressDeadlineSeconds: 60
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        type: mongodb
+        service: mongodb
+        color: blue
+    spec:
+      volumes:
+      - name: mongovolume
+        persistentVolumeClaim:
+          claimName: mongovolume
+      imagePullSecrets:
+      - name: repo
+      containers:
+      - name: mongodb
+        volumeMounts:
+        - name: mongovolume
+          mountPath: /data/db
+        image: mongo:latest
+        ports:
+        - containerPort: 27017
+      
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 27017  
+  selector:
+    type: mongodb
+    service: mongodb
+    color: blue
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongovolume
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: mongovolume
