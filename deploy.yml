@@ -65,6 +65,15 @@ spec:
         volumeMounts:
         - mountPath: "src/Majunga/Server/Website.db"
           name: sqlitevolume
+        env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: "Development"
+          - name: ASPNETCORE_URLS
+            value: "https://+:443;http://+:80"
+          - name: ASPNETCORE_Kestrel__Certificates__Default__Password
+            value: "#{certPassword}#"
+          - name: ASPNETCORE_Kestrel__Certificates__Default__Path
+            value: "https/Majunga.Server.pfx"
 
 ---
 
