@@ -63,7 +63,7 @@ spec:
         - containerPort: 80
           name: website
         volumeMounts:
-        - mountPath: "app/Website.db"
+        - mountPath: "src/Majunga/Server/Website.db"
           name: sqlitevolume
 
 ---
