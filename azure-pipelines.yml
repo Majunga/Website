@@ -31,7 +31,7 @@ stages:
     - task: replacetokens@3
       inputs:
         rootDirectory: '$(Build.Repository.LocalPath)'
-        targetFiles: '**/appsettings*.config'
+        targetFiles: '**/appsettings*.json'
         encoding: 'auto'
         writeBOM: true
         actionOnMissing: 'warn'
