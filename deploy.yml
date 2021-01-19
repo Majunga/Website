@@ -60,7 +60,7 @@ spec:
       - name: website
         image: #{image}#
         ports:
-        - containerPort: 8080
+        - containerPort: 80
           name: website
         volumeMounts:
         - mountPath: "src/Majunga/Server/Website.db"
@@ -128,7 +128,7 @@ kind: Service
 metadata:
   name: mongodb
 spec:
-  type: LoadBalancer
+  type: NodePort
   ports:
   - port: 27017  
   selector:
