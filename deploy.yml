@@ -76,7 +76,6 @@ spec:
   type: LoadBalancer
   ports:
   - port: 80
-    nodePort: 8080
   selector:
     type: website
     service: website
