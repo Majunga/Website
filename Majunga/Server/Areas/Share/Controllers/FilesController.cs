@@ -5,6 +5,7 @@ using Majunga.Shared.ViewModels;
 using Majunga.Shared.Models;
 using Majunga.Server.Data.MongoServices;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Majunga.Server.Areas.Share.Controllers
 {
@@ -19,7 +20,7 @@ namespace Majunga.Server.Areas.Share.Controllers
             _context = context;
         }
 
-        // GET: api/Files
+        // GET: api/share/Files
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FileView>>> GetFiles()
         {
@@ -27,26 +28,45 @@ namespace Majunga.Server.Areas.Share.Controllers
             { 
                 Id = f.Id, 
                 Name = f.Name,
+                Filename = f.Filename,
                 ShareLink = f.ShareLink
             }).ToList();
         }
 
-        // GET: api/Files/{shareLink}
-        [HttpGet("{shareLink}")]
-        public async Task<ActionResult<File>> GetFile(string shareLink)
+        
+        // GET: api/share/Files/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<File>> GetFile(string id)
         {
-            var file = (await _context.Get()).FirstOrDefault(e => e.ShareLink == shareLink);
-            await _context.GetFile(file);
+            var file = await _context.Get(id);
 
-            if (file == null)
+            if(file == null)
             {
                 return NotFound();
             }
 
-            return this.File(file.FileBytes, file.ContentType, file.Filename);
+            return file;
         }
 
-        // PUT: api/Files/5
+        // GET: api/share/Files/{shareLink}/{filename}
+        [AllowAnonymous]
+        [HttpGet("{shareLink}/{filename}")]
+        public async Task<ActionResult<File>> GetFile(string shareLink, string filename)
+        {
+            var file = (await _context.Get()).FirstOrDefault(e => e.ShareLink == shareLink);
+
+            if(file == null || file.Filename != filename)
+            {
+                return NotFound();
+            }
+
+            await _context.GetFile(file);
+
+
+            return base.File(file.FileBytes, file.ContentType, file.Filename);
+        }
+
+        // PUT: api/share/Files/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFile(string id, FileView fileViewModel)
@@ -65,7 +85,7 @@ namespace Majunga.Server.Areas.Share.Controllers
             return NoContent();
         }
 
-        // POST: api/Files
+        // POST: api/share/Files
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [RequestSizeLimit(1000000000)]
@@ -77,7 +97,7 @@ namespace Majunga.Server.Areas.Share.Controllers
             return CreatedAtAction("GetFile", new { id = createdFile.Id }, createdFile);
         }
 
-        // DELETE: api/Files/5
+        // DELETE: api/share/Files/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFileAsync(string id)
         {

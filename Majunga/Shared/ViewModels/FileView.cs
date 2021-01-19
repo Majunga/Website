@@ -6,6 +6,7 @@ namespace Majunga.Shared.ViewModels
     {
         public string Id { get; set; }
         public string Name { get; set; }
+        public string Filename { get; set; }
         public string ShareLink { get; set; }
         public void CreateShareLink()
         {

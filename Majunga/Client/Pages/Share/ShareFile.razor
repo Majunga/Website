@@ -1,17 +1,13 @@
 ﻿@inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject AlertState AlertState
-@inject IJSRuntime JSRuntime
 
 <Popup @ref="_popup" id="@Id" OnHide="@OnHide">
     <PopupHeader Hide="@(async () => await this._popup.Hide())">
         <h3>Share File</h3>
     </PopupHeader>
     <PopupBody>
-        <a class="mr-5" href="@_shareUrl" name="ShareLink">@_name</a>&nbsp;<button role="button" class="btn btn-success" @onclick="() => CopyLink()">Copy</button>
-        <Alert Type="AlertType.Success" class="@(_copied ? "d-inline" : "d-none")">
-            Copied!
-        </Alert>
+        <button class="btn btn-success" @onclick='(() => NavigationManager.NavigateTo($"/share/sharefile/{_model.Id}/{WebUtility.UrlEncode(_model.Filename)}"))' name="ShareLink">View</button>
     </PopupBody>
     <PopupFooter>
         <button role="button" class="btn btn-primary" @onclick="() => _popup.Hide()">Close</button>
@@ -24,13 +20,11 @@
 
     [Parameter] public EventCallback OnHide { get; set; }
 
-    private string _shareUrl;
-    private string _name;
-    private bool _copied = false;
+    private FileView _model;
 
     public async Task Show(FileView model)
     {
-        _name = model.Name;
+        _model = model;
         if (string.IsNullOrWhiteSpace(model.ShareLink))
         {
             model.CreateShareLink();
@@ -43,14 +37,7 @@
             }
         }
 
-        _shareUrl = NavigationManager.ToAbsoluteUri($"/api/share/files/{model.ShareLink}").AbsoluteUri;
         await this._popup.Show();
-    }
-
-    protected async Task CopyLink()
-    {
-        await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", _shareUrl);
-        _copied = true;
     }
 }
 

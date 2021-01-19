@@ -1,0 +1,67 @@
+﻿@page "/Share/ViewFile/{fileId}"
+
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+@inject IJSRuntime JSRuntime
+
+@attribute [AllowAnonymous]
+
+@layout NoLayout
+
+<h3>@_model?.Filename</h3>
+<button role="button" class="btn btn-success" @onclick="() => CopyLink()">Copy</button>
+<Alert Type="AlertType.Success" class="@(_copied ? "d-inline" : "d-none")">
+    Copied!
+</Alert>
+<br/>
+
+@if (_fileExtension == "gif" || _fileExtension == "png" || _fileExtension == "jpeg")
+{
+    <img src="@_shareUrl" />
+}
+else if (_fileExtension == "mp4")
+{
+    <video controls height="">
+        <source src="@_shareUrl" type="video/mp4" />
+    </video>
+}
+else
+{
+    <a href="@_shareUrl" class="btn btn-success">Download</a>
+}
+
+
+@code {
+    [Parameter]
+    public string FileId { get; set; }
+
+    [Parameter]
+    public string Filename { get; set; }
+
+
+    private FileView _model;
+    private string _shareUrl;
+    private bool _copied = false;
+
+    private string _fileExtension;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _model = await Http.GetFromJsonAsync<FileView>($"/api/share/files/{this.FileId}");
+
+        if (_model == null)
+        {
+            NavigationManager.NavigateTo("/share");
+            return;
+        }
+
+        _shareUrl = NavigationManager.ToAbsoluteUri($"/api/share/files/{_model.ShareLink}/{Uri.EscapeUriString(_model.Filename)}").AbsoluteUri;
+        _fileExtension = _model.Filename.Split('.').Last();
+    }
+
+    protected async Task CopyLink()
+    {
+        await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", _shareUrl);
+        _copied = true;
+    }
+}
