@@ -1,4 +1,4 @@
-﻿@page "/Share/ViewFile/{fileId}"
+﻿@page "/Share/ViewFile/{fileId}/{filename}"
 
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
@@ -8,7 +8,7 @@
 
 @layout NoLayout
 
-<h3>@_model?.Filename</h3>
+<h3>@Filename</h3>
 <button role="button" class="btn btn-success" @onclick="() => CopyLink()">Copy</button>
 <Alert Type="AlertType.Success" class="@(_copied ? "d-inline" : "d-none")">
     Copied!

@@ -39,7 +39,7 @@ else
                             }
                             else
                             {
-                                <button class="btn btn-success" @onclick='(() => NavigationManager.NavigateTo($"/share/viewfile/{item.Id}"))'>View</button>
+                                <button class="btn btn-success" @onclick='(() => NavigationManager.NavigateTo($"/share/viewfile/{item.Id}/{WebUtility.UrlEncode(_model.Filename)}"))'>View</button>
                             }
                             <button class="btn btn-danger" @onclick='() => DeleteAsync(item.Id)'>Delete</button>
                         </div>
