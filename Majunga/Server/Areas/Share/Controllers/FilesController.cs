@@ -90,16 +90,16 @@ namespace Majunga.Server.Areas.Share.Controllers
         [HttpPost]
         [RequestSizeLimit(1000000000)]
         [DisableRequestSizeLimit()]
-        public ActionResult<File> PostFile(File file)
+        public async Task<ActionResult<File>> PostFile(File file)
         {
-            var createdFile = _context.Create(file);
+            var createdFile = await _context.Create(file);
 
             return CreatedAtAction("GetFile", new { id = createdFile.Id }, createdFile);
         }
 
         // DELETE: api/share/Files/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFileAsync(string id)
+        public async Task<IActionResult> DeleteFile(string id)
         {
             var file = await _context.Get(id);
             if (file == null)
