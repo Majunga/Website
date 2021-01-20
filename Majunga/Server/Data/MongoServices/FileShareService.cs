@@ -1,4 +1,5 @@
 ﻿using Majunga.Shared.Models;
+using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
@@ -12,15 +13,20 @@ namespace Majunga.Server.Data.MongoServices
     {
         private readonly IMongoCollection<File> _entities;
         private readonly GridFSBucket _gridFs;
+        private readonly ILogger<FileShareService> _logger;
 
-        public FileShareService(IDatabaseSettings settings)
+        public FileShareService(ILogger<FileShareService> logger, IDatabaseSettings settings)
         {
+            _logger = logger;
+
+            _logger.LogInformation($"Connection String: {settings.ConnectionString}");
+            _logger.LogInformation($"Database name: {settings.DatabaseName}");
+
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
 
             _entities = database.GetCollection<File>("FileShare");
             _gridFs = new GridFSBucket(database);
-            
         }
 
         public async Task<List<File>> Get() =>
