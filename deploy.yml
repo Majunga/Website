@@ -46,7 +46,8 @@ spec:
   template:
     metadata:
       labels:
-        type: website
+        app: websiteapp
+        tier: website
         service: website
         color: green
         language: csharp
@@ -66,7 +67,7 @@ spec:
         - containerPort: 443
           name: https
         volumeMounts:
-        - mountPath: "src/Majunga/Server/Website.db"
+        - mountPath: "app/Data/Website.db"
           name: sqlitevolume
         env:
           - name: ASPNETCORE_ENVIRONMENT
@@ -92,7 +93,8 @@ spec:
   - port: 80
     name: http
   selector:
-    type: website
+    app: websiteapp
+    tier: website
     service: website
     color: green
 
@@ -107,7 +109,7 @@ spec:
   selector:
     matchLabels:
       app: websiteapp
-      type: mongodb
+      tier: database
       service: mongodb
       color: blue
   minReadySeconds: 1
@@ -118,7 +120,8 @@ spec:
   template:
     metadata:
       labels:
-        type: mongodb
+        app: websiteapp
+        tier: database
         service: mongodb
         color: blue
     spec:
@@ -148,7 +151,8 @@ spec:
   ports:
   - port: 27017  
   selector:
-    type: mongodb
+    app: websiteapp
+    tier: database
     service: mongodb
     color: blue
 
