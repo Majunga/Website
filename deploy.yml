@@ -67,7 +67,7 @@ spec:
         - containerPort: 443
           name: https
         volumeMounts:
-        - mountPath: "app/Data/Website.db"
+        - mountPath: "/app/Data"
           name: sqlitevolume
         env:
           - name: ASPNETCORE_ENVIRONMENT
