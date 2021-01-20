@@ -71,7 +71,7 @@ spec:
           name: sqlitevolume
         env:
           - name: ASPNETCORE_ENVIRONMENT
-            value: "Development"
+            value: "Production"
           - name: ASPNETCORE_URLS
             value: "https://+:443;http://+:80"
           - name: ASPNETCORE_Kestrel__Certificates__Default__Password
@@ -149,7 +149,7 @@ metadata:
 spec:
   type: NodePort
   ports:
-  - port: 27017  
+  - port: 27017
   selector:
     app: websiteapp
     tier: database
