@@ -338,5 +338,9 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
-/Majunga/Server/Website.db
+
+
 kuberconfig.yaml
+deploy.yml
+deploy-local-config.yml
+appsettings.Development.json

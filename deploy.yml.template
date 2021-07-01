@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: website
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: websiteapp
+      tier: website
+      service: website
+      color: green
+  minReadySeconds: 1
+  progressDeadlineSeconds: 60
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: websiteapp
+        tier: website
+        service: website
+        color: green
+        language: csharp
+    spec:      
+      imagePullSecrets:
+        - name: repo
+      containers:
+      - name: website
+        image: #{image}#
+        ports:
+        - containerPort: 80
+          name: http
+        - containerPort: 443
+          name: https
+        envFrom:
+          - configMapRef:
+              name: website-config
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: website
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 443
+    name: https
+  - port: 80
+    name: http
+  selector:
+    app: websiteapp
+    tier: website
+    service: website
+    color: green
+
+---
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:latest
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: postgres-config
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgredb
+      volumes:
+        - name: postgredb
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  type: NodePort
+  ports:
+  - port: 27017
+  selector:
+    app: websiteapp
+    tier: database
+    service: postgres
+    color: blue
+
+---

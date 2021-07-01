@@ -1,27 +1,31 @@
+kind: PersistentVolume
 apiVersion: v1
-kind: PersistentVolumeClaim
 metadata:
-  name: mongovolume
+  name: postgres-pv-volume
+  labels:
+    type: local
+    app: postgres
 spec:
+  storageClassName: manual
+  capacity:
+    storage: 5Gi
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/data"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: postgres-pv-claim
+  labels:
+    app: postgres
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
   resources:
     requests:
       storage: 5Gi
-  storageClassName: do-block-storage
 
----  
- 
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: sqlitevolume
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: do-block-storage
-  
 ---
