@@ -39,7 +39,12 @@ stages:
         command: 'custom'
         custom: 'dev-certs'
         arguments: 'https --trust'
-        
+
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: 'Rename-Item -Path "$(Build.Repository.LocalPath)/deploy.yml.template" -NewName "deploy.yml"'
+
     - task: replacetokens@3
       inputs:
         rootDirectory: '$(Build.Repository.LocalPath)'
