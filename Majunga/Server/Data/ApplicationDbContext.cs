@@ -1,6 +1,5 @@
 ﻿using IdentityServer4.EntityFramework.Options;
 using Majunga.Server.Models;
-using Majunga.Shared.Models;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
