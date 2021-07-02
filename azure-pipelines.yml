@@ -7,7 +7,6 @@ trigger:
 
 resources:
 - repo: self
-  clean: true
 
 variables:
   # Container registry service connection established during pipeline creation
@@ -28,6 +27,8 @@ stages:
     displayName: Build
     pool:
       name: $(agent)
+    workspace:
+      clean: all
     steps:
     - task: DotNetCoreCLI@2
       inputs:
