@@ -105,6 +105,7 @@ spec:
   type: NodePort
   ports:
   - port: 27017
+    targetPort: 5432
   selector:
     app: websiteapp
     tier: database
