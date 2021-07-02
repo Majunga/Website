@@ -3,6 +3,7 @@ using Majunga.Server.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -52,6 +53,14 @@ namespace Majunga.Server
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+
+            if(Env.IsProduction()){
+                services.Configure<ForwardedHeadersOptions>(options =>
+                {
+                     options.ForwardedHeaders =
+                         ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                });
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,9 +76,9 @@ namespace Majunga.Server
             {
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseForwardedHeaders();
                 app.UseHsts();
             }
-
 
             using (var scope = app.ApplicationServices.CreateScope())
             using (var context = scope.ServiceProvider.GetService<ApplicationDbContext>())
