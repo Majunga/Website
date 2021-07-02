@@ -32,7 +32,7 @@ namespace Majunga.Server
         {
             Console.WriteLine($"Hosting environment: {Env.EnvironmentName}");
             Console.WriteLine($"Current Directory: {Directory.GetCurrentDirectory()}");
-            var certExists = File.Exists("./http/Majunga.Server.pfx");
+            var certExists = File.Exists("https/Majunga.Server.pfx");
             Console.WriteLine($"Certificate exists: {certExists}");
 
 
