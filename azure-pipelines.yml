@@ -43,7 +43,7 @@ stages:
     - task: PowerShell@2
       inputs:
         targetType: 'inline'
-        script: 'Rename-Item -Path "$(Build.Repository.LocalPath)/deploy.template.yml" -NewName "deploy.yml"'
+        script: 'Rename-Item -Path "$(Build.Repository.LocalPath)/deploy.template.yml" -NewName "deploy.yml"' -Force
 
     - task: replacetokens@3
       inputs:
