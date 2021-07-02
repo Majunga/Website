@@ -108,7 +108,7 @@ spec:
   selector:
     app: websiteapp
     tier: database
-    service: postgres
+    service: database
     color: blue
 
 ---
