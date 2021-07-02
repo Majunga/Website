@@ -31,7 +31,7 @@ namespace Majunga.Server
         public void ConfigureServices(IServiceCollection services)
         {
             Console.WriteLine($"Hosting environment: {Env.EnvironmentName}");
-            
+            Console.WriteLine($"Current Directory: {Directory.GetCurrentDirectory()}");
             var certExists = File.Exists("./http/Majunga.Server.pfx");
             Console.WriteLine($"Certificate exists: {certExists}");
 
