@@ -26,10 +26,6 @@ spec:
     spec:      
       imagePullSecrets:
         - name: repo
-      volumes:
-      - name: sqlitevolume
-        persistentVolumeClaim:
-          claimName: sqlitevolume
       containers:
       - name: website
         image: #{image}#
@@ -38,18 +34,10 @@ spec:
           name: http
         - containerPort: 443
           name: https
-        volumeMounts:
-        - mountPath: "/app/Data"
-          name: sqlitevolume
-        env:
-          - name: ASPNETCORE_ENVIRONMENT
-            value: "Development"
-          - name: ASPNETCORE_URLS
-            value: "https://+:443;http://+:80"
-          - name: ASPNETCORE_Kestrel__Certificates__Default__Password
-            value: "#{certPassword}#"
-          - name: ASPNETCORE_Kestrel__Certificates__Default__Path
-            value: "https/Majunga.Server.pfx"
+        envFrom:
+          - configMapRef:
+              name: website-config
+
 
 ---
 
@@ -71,53 +59,48 @@ spec:
     color: green
 
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongodb
+  name: database
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: websiteapp
       tier: database
-      service: mongodb
+      service: database
       color: blue
-  minReadySeconds: 1
-  progressDeadlineSeconds: 60
-  revisionHistoryLimit: 5
-  strategy:
-    type: RollingUpdate
   template:
     metadata:
       labels:
         app: websiteapp
         tier: database
-        service: mongodb
+        service: database
         color: blue
     spec:
-      imagePullSecrets:
-      - name: repo
-      volumes:
-      - name: mongovolume
-        persistentVolumeClaim:
-          claimName: mongovolume
       containers:
-      - name: mongodb
-        volumeMounts:
-        - name: mongovolume
-          mountPath: /data/db
-        image: mongo:latest
-        ports:
-        - containerPort: 27017
-
+        - name: database
+          image: postgres:latest
+          imagePullPolicy: "Always"
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: database-config
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: database
+      volumes:
+        - name: database
+          persistentVolumeClaim:
+            claimName: database-pv-claim
 ---
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongodb
+  name: database
 spec:
   type: NodePort
   ports:
@@ -125,7 +108,7 @@ spec:
   selector:
     app: websiteapp
     tier: database
-    service: mongodb
+    service: postgres
     color: blue
 
 ---

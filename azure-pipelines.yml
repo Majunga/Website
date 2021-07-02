@@ -40,6 +40,11 @@ stages:
         custom: 'dev-certs'
         arguments: 'https --trust'
 
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: 'Rename-Item -Path "$(Build.Repository.LocalPath)/deploy.template.yml" -NewName "deploy.yml"'
+
     - task: replacetokens@3
       inputs:
         rootDirectory: '$(Build.Repository.LocalPath)'
@@ -68,6 +73,7 @@ stages:
         Contents: |
           deploy.yml
           deploy-storage.yml
+          deploy-config.yml
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
     - task: PublishBuildArtifacts@1
       inputs:
