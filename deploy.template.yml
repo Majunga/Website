@@ -32,12 +32,9 @@ spec:
         ports:
         - containerPort: 80
           name: http
-        - containerPort: 443
-          name: https
         envFrom:
           - configMapRef:
               name: website-config
-
 
 ---
 
@@ -49,8 +46,7 @@ spec:
   type: LoadBalancer
   ports:
   - port: 443
-    name: https
-  - port: 80
+    targetPort: 80
     name: http
   selector:
     app: websiteapp
