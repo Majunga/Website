@@ -26,5 +26,5 @@ data:
   ASPNETCORE_ENVIRONMENT: Production
   ASPNETCORE_URLS: https://+:443;http://+:80
   ASPNETCORE_Kestrel__Certificates__Default__Password: #{certPassword}#
-  ASPNETCORE_Kestrel__Certificates__Default__Path: /https/Majunga.Server.pfx
+  ASPNETCORE_Kestrel__Certificates__Default__Path: https/Majunga.Server.pfx
   

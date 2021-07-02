@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace Majunga.Server
@@ -30,6 +31,10 @@ namespace Majunga.Server
         public void ConfigureServices(IServiceCollection services)
         {
             Console.WriteLine($"Hosting environment: {Env.EnvironmentName}");
+            
+            var certExists = File.Exists("./http/Majunga.Server.pfx");
+            Console.WriteLine($"Certificate exists: {certExists}");
+
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
