@@ -59,39 +59,48 @@ spec:
     color: green
 
 ---
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres
+  name: database
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: websiteapp
+      tier: database
+      service: database
+      color: blue
   template:
     metadata:
       labels:
-        app: postgres
+        app: websiteapp
+        tier: database
+        service: database
+        color: blue
     spec:
       containers:
-        - name: postgres
+        - name: database
           image: postgres:latest
-          imagePullPolicy: "IfNotPresent"
+          imagePullPolicy: "Always"
           ports:
             - containerPort: 5432
           envFrom:
             - configMapRef:
-                name: postgres-config
+                name: database-config
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: postgredb
+              name: database
       volumes:
-        - name: postgredb
+        - name: database
           persistentVolumeClaim:
-            claimName: postgres-pv-claim
+            claimName: database-pv-claim
 ---
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres
+  name: database
 spec:
   type: NodePort
   ports:

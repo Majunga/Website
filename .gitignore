@@ -344,3 +344,4 @@ kuberconfig.yaml
 deploy.yml
 deploy-local-config.yml
 appsettings.Development.json
+/Majunga/Server/appsettings.Staging.json
