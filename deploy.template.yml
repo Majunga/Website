@@ -30,7 +30,7 @@ spec:
       - name: website
         image: #{image}#
         ports:
-        - containerPort: 80
+        - containerPort: 8080
           name: http
         envFrom:
           - configMapRef:
@@ -38,31 +38,6 @@ spec:
 
 ---
 
-apiVersion: v1
-kind: Service
-metadata:
-  name: website
-  annotations:
-    service.beta.kubernetes.io/do-loadbalancer-redirect-http-to-https: "true"
-    service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
-    service.beta.kubernetes.io/do-loadbalancer-certificate-id: "majunga-cert"
-    service.beta.kubernetes.io/do-loadbalancer-hostname: "majunga.co.uk"
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 443
-    targetPort: http
-    name: https
-  - port: 80
-    targetPort: http
-    name: http
-  selector:
-    app: websiteapp
-    tier: website
-    service: website
-    color: green
-
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -99,21 +74,3 @@ spec:
         - name: database
           persistentVolumeClaim:
             claimName: database-pv-claim
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: database
-spec:
-  type: NodePort
-  ports:
-  - port: 27017
-    targetPort: 5432
-  selector:
-    app: websiteapp
-    tier: database
-    service: database
-    color: blue
-
----

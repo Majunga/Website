@@ -76,6 +76,8 @@ stages:
           deploy.yml
           deploy-storage.yml
           deploy-config.yml
+          deploy-ingress.yml
+          deploy-service.yml
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
     - task: PublishBuildArtifacts@1
       inputs:
